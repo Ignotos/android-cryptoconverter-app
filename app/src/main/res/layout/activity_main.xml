@@ -22,7 +22,7 @@
             android:text="Enter the total transaction amount in CAD below:" />
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/inputAmountTextBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
@@ -58,13 +58,13 @@
             android:text="Coverted amound in BTC:" />
 
         <EditText
-            android:id="@+id/editText3"
+            android:id="@+id/convertedAmountTextBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="0.00 BTC"
             android:inputType="textPersonName" />
-
+        <!--
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -77,5 +77,6 @@
                 android:id="@+id/fetcheddata"
                 android:hint="Fetched Text Here!!!"/>
         </ScrollView>
+        -->
     </LinearLayout>
 </RelativeLayout>
