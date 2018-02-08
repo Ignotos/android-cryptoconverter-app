@@ -1,6 +1,10 @@
 package com.cryptoconverter.app;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.os.Build;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,7 +26,7 @@ import java.text.DecimalFormat;
 public class FetchData extends AsyncTask<Void, Void, Void> {
     String data = "";
     String btc_cad_string = "";
-    @Override
+
     protected Void doInBackground(Void... voids) {
         try {
             URL url = new URL("https://coinsquare.io/?method=book&ticker=CAD&base=BTC");
@@ -58,7 +62,17 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-
-        MainActivity.data.setText(btc_cad_string);
+        double btc_cad_conversion = Double.parseDouble(btc_cad_string);
+        String dollarAmountInputString = MainActivity.inputAmountTextBox.getText().toString();
+        try {
+            double dollarAmountInput = Double.parseDouble(dollarAmountInputString);
+            double convertedAmount = btc_cad_conversion * dollarAmountInput;
+            DecimalFormat formatter = new DecimalFormat("#0.00000000");
+            btc_cad_string = formatter.format(convertedAmount);
+            MainActivity.convertedAmountTextBox.setText(btc_cad_string + " BTC");
+        }
+        catch (NumberFormatException e) {
+            MainActivity.convertedAmountTextBox.setText("Error! input transaction amount must be a decimal number.");
+        }
     }
 }
