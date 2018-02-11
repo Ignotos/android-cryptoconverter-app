@@ -26,10 +26,46 @@ import java.text.DecimalFormat;
 public class FetchData extends AsyncTask<Void, Void, Void> {
     String data = "";
     String btc_cad_string = "";
+    String selectedCrypto = "";
+    JSONObject returnedJson;
+    JSONArray quotes;
+    String testStringToDisplay = "";
 
     protected Void doInBackground(Void... voids) {
+        selectedCrypto = MainActivity.getSelectedCryptoVal();
         try {
-            URL url = new URL("https://coinsquare.io/?method=book&ticker=CAD&base=BTC");
+            URL url = new URL("https://coinsquare.io/?method=quotes");
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            InputStream inputStream = httpURLConnection.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line = "";
+            while (line != null) {
+                line = bufferedReader.readLine();
+                data = data + line;
+            }
+            returnedJson = new JSONObject(data);
+            quotes = returnedJson.getJSONArray("quotes");
+            for (int i = 0; i < quotes.length(); i++) {
+                JSONObject quote = quotes.getJSONObject(i);
+                String ticker = quote.getString("ticker");
+                if (ticker == selectedCrypto) {
+                    testStringToDisplay = quote.toString();
+                    break;
+                }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        /*
+        try {
+            selectedCrypto = MainActivity.getSelectedCryptoVal();
+            //https://coinsquare.io/?method=quotes
+            URL url = new URL("https://coinsquare.io/?method=book&ticker=CAD&base=" + selectedCrypto);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = httpURLConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -49,6 +85,7 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
             DecimalFormat formatter = new DecimalFormat("#0.00000000");
             btc_cad_string = formatter.format(cad_ubtc);
 
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -56,11 +93,16 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        */
         return null;
+
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        MainActivity.fetchedData.setText(testStringToDisplay);
+        /*
         super.onPostExecute(aVoid);
         double btc_cad_conversion = Double.parseDouble(btc_cad_string);
         String dollarAmountInputString = MainActivity.inputAmountTextBox.getText().toString();
@@ -69,10 +111,11 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
             double convertedAmount = btc_cad_conversion * dollarAmountInput;
             DecimalFormat formatter = new DecimalFormat("#0.00000000");
             btc_cad_string = formatter.format(convertedAmount);
-            MainActivity.convertedAmountTextBox.setText(btc_cad_string + " BTC");
+            MainActivity.convertedAmountTextBox.setText(btc_cad_string + " " + selectedCrypto);
         }
         catch (NumberFormatException e) {
             MainActivity.convertedAmountTextBox.setText("Error! input transaction amount must be a decimal number.");
         }
+        */
     }
 }
